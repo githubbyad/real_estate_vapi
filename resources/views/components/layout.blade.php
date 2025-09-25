@@ -9,13 +9,10 @@
 </head>
 <body>
     <header class="bg-light py-3 mb-4">
-        <div class="container d-flex justify-content-between align-items-center">
+        <div class="container d-flex justify-content-center align-items-center">
             <a href="/">
-                <img src="{{ $settings->logo ?? asset('logo.png') }}" alt="Logo" height="50">
+                <img src="{{ $settings->logo ?? asset('logo.png') }}" alt="Logo" height="100">
             </a>
-            <nav>
-                <!-- Add navigation links here -->
-            </nav>
         </div>
     </header>
 
