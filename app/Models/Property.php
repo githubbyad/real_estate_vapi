@@ -36,4 +36,12 @@ class Property extends Model
     {
         return $this->hasMany(PropertyImage::class)->orderBy('sort_order');
     }
+
+    protected static function booted() 
+    {
+        // Clear cache on create, update, delete
+        static::created(fn () => cache()->forget('properties'));
+        static::updated(fn () => cache()->forget('properties'));
+        static::deleted(fn () => cache()->forget('properties'));
+    }
 }

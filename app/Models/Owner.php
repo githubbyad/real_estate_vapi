@@ -20,4 +20,12 @@ class Owner extends Model
         'address',
         'bio'
     ];
+
+    protected static function booted() 
+    {
+        // Clear cache on create, update, delete
+        static::created(fn () => cache()->forget('owners'));
+        static::updated(fn () => cache()->forget('owners'));
+        static::deleted(fn () => cache()->forget('owners'));
+    }
 }

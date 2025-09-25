@@ -15,24 +15,22 @@ class PropertyController extends Controller
     public function index(CachedData $cachedData)
     {
         // Get properties and their images from cache
-        $properties = $cachedData->getProperties();
-        $propertyImages = $cachedData->getPropertyImages();
+        $properties = $cachedData->getProperties();        
 
-        return view('properties.index', compact('properties', 'propertyImages'));
+        return view('properties.index', compact('properties'));
     }
 
     /* Display the specified property */
     public function show($id, CachedData $cachedData)
     {
         // Find the property and its images
-        $property = $cachedData->getProperties()->firstWhere('id', $id);
-        $propertyImages = $cachedData->getPropertyImages();
+        $property = $cachedData->getProperties()->firstWhere('id', $id);        
         // If property not found, abort
         if (!$property) {
             abort(404, 'Property not found');
         }
 
-        return view('properties.show', compact('property', 'propertyImages'));
+        return view('properties.show', compact('property'));
     }
 
     /* Show the form for creating a new property */
@@ -85,9 +83,6 @@ class PropertyController extends Controller
                 $property->images()->create(['image_path' => $path]);
             }
         }
-
-        // Clear cache after creating a new property
-        self::clearCache();
 
         return redirect()->route('properties.index')->with('success', 'Property created successfully.');
     }
@@ -146,9 +141,9 @@ class PropertyController extends Controller
 
         // Generate slug
         $validatedData['slug'] = Str::slug($validatedData['title'], '-') . '-' . time();
-
-        // Get existing images        
-        $propertyImages = $cachedData->getPropertyImages()->where('property_id', $id);
+        
+        // Get existing images from DB (not cache)
+        $propertyImages = $property->images;
 
         // except images
         $validatedData = $request->except('images');
@@ -167,9 +162,6 @@ class PropertyController extends Controller
             }
         }
 
-        // Clear cache after updating a property
-        self::clearCache();
-
         return redirect()->route('properties.index')->with('success', 'Property updated successfully.');
     }
 
@@ -177,7 +169,7 @@ class PropertyController extends Controller
     {
         // Find the property and its images
         $property = $cachedData->getProperties()->firstWhere('id', $id);
-        $propertyImages = $cachedData->getPropertyImages()->where('property_id', $id);
+        $propertyImages = $property->images;
 
         // If property not found, abort
         if (!$property) {
@@ -192,15 +184,6 @@ class PropertyController extends Controller
             RemoveFileService::remove('property', $image->image_path);
         }
 
-        // Clear cache after deleting a property
-        self::clearCache();
-
         return redirect()->route('properties.index')->with('success', 'Property deleted successfully.');
-    }
-
-    public function clearCache()
-    {
-        cache()->forget('properties');
-        cache()->forget('property_images');
     }
 }

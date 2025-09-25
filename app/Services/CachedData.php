@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\DB;
 
 class CachedData
 {
-    private $cacheTime = 7 * 24 * 60 * 60; // Cache duration in seconds (7 days)
+    private static $cacheTime = 7; // Cache duration in days
     /**
      * Retrieve data from cache or store it if not present.
      *
@@ -16,10 +16,10 @@ class CachedData
      * @param int $ttl Time to live in seconds
      * @return mixed
      */
-    public static function remember($key, \Closure $callback, $ttl = 3600)
-    {
-        return Cache::remember($key, $ttl, $callback);
-    }
+    // public static function remember($key, \Closure $callback, $ttl = 3600)
+    // {
+    //     return Cache::remember($key, $ttl, $callback);
+    // }
 
     /**
      * Clear a specific cache entry.
@@ -32,14 +32,14 @@ class CachedData
         Cache::forget($key);
     }
 
-    public function getCacheTime()
+    public static function getCacheTime()
     {
-        return $this->cacheTime;
+        return self::$cacheTime * 24 * 60 * 60;
     }
 
-    public function getProperties()
+    public static function getProperties()
     {
-        return Cache::remember('properties', $this->cacheTime, function () {
+        return Cache::remember('properties', self::getCacheTime(), function () {
             return Property::with('images')->get();
         });
     }
@@ -49,9 +49,9 @@ class CachedData
      *
      * @return \Illuminate\Support\Collection
      */
-    public function getUsers()
+    public static function getUsers()
     {
-        return Cache::remember('users', $this->cacheTime, function () {
+        return Cache::remember('users', self::getCacheTime(), function () {
             return \App\Models\User::all();
         });
     }
@@ -61,9 +61,9 @@ class CachedData
      *
      * @return \Illuminate\Support\Collection
      */
-    public function getInquiries()
+    public static function getInquiries()
     {
-        return Cache::remember('inquiries', $this->cacheTime, function () {
+        return Cache::remember('inquiries', self::getCacheTime(), function () {
             return \App\Models\Inquiry::all();
         });
     }
@@ -73,9 +73,9 @@ class CachedData
      *
      * @return \Illuminate\Support\Collection
      */
-    public function getAgents()
+    public static function getAgents()
     {
-        return Cache::remember('agents', $this->cacheTime, function () {
+        return Cache::remember('agents', self::getCacheTime(), function () {
             return \App\Models\Agent::all();
         });
     }
@@ -85,9 +85,9 @@ class CachedData
      *
      * @return \Illuminate\Support\Collection
      */
-    public function getOwners()
+    public static function getOwners()
     {
-        return Cache::remember('owners', $this->cacheTime, function () {
+        return Cache::remember('owners', self::getCacheTime(), function () {
             return \App\Models\Owner::all();
         });
     }
@@ -99,8 +99,8 @@ class CachedData
      */
     public static function getSettings()
     {
-        return Cache::remember('settings', 60 * 60, function () {
-            return DB::table('settings')->first();
+        return Cache::remember('settings', self::getCacheTime(), function () {
+            return \App\Models\Setting::first();
         });
     }
 
@@ -112,17 +112,5 @@ class CachedData
     public static function clearSettingsCache()
     {
         Cache::forget('settings');
-    }
-
-    /**
-     * Get the property images cache.
-     *
-     * @return \Illuminate\Support\Collection
-     */
-    public function getPropertyImages()
-    {
-        return Cache::remember('property_images', $this->cacheTime, function () {
-            return \App\Models\PropertyImage::all();
-        });
     }
 }

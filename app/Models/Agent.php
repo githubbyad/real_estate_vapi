@@ -31,4 +31,12 @@ class Agent extends Model
     {
         return $this->hasMany(Property::class);
     }
+
+    protected static function booted() 
+    {
+        // Clear cache on create, update, delete
+        static::created(fn () => cache()->forget('agents'));
+        static::updated(fn () => cache()->forget('agents'));
+        static::deleted(fn () => cache()->forget('agents'));
+    }
 }

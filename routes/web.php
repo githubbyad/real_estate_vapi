@@ -33,4 +33,14 @@ Route::resource('owners', OwnerController::class);
 // Route for uploading agent profile picture
 Route::post('/agents/{agent}/upload-profile-picture', [AgentController::class, 'uploadProfilePicture'])->name('agents.uploadProfilePicture');
 
+// Inquiry Routes
+Route::resource('inquiries', InquiryController::class)->only(['index', 'show', 'store', 'edit', 'update']);
+
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+// Dashboard route
+Route::prefix('manage')->middleware(['auth'])->group(function () {
+    Route::get('/dashboard', function () {
+        return view('auth.dashboard');
+    })->name('dashboard');
+});
