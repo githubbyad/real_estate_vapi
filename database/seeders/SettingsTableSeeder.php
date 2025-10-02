@@ -30,6 +30,8 @@ class SettingsTableSeeder extends Seeder
             'footer_text' => '© 2025 My Website. All rights reserved.',
             'logo' => '/images/logo.png',
             'favicon' => '/images/favicon.ico',
+            'currency' => 'INR',
+            'timezone' => 'Asia/Kolkata',
             'social_facebook' => 'https://facebook.com/mywebsite',
             'social_twitter' => 'https://twitter.com/mywebsite',
             'social_instagram' => 'https://instagram.com/mywebsite',

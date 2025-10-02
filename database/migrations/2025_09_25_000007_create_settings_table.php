@@ -29,6 +29,8 @@ return new class extends Migration {
             $table->string('footer_text')->nullable();
             $table->string('logo')->nullable();
             $table->string('favicon')->nullable();
+            $table->string('currency', 3)->default('INR');
+            $table->string('timezone')->default('Asia/Kolkata');
             $table->string('social_facebook')->nullable();
             $table->string('social_twitter')->nullable();
             $table->string('social_instagram')->nullable();

@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string('profile_picture')->nullable();
             $table->string('address')->nullable();
             $table->text('bio')->nullable();            
+            $table->boolean('is_active')->default(true);
             $table->timestamps();
         });
     }

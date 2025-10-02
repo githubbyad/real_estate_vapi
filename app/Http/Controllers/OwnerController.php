@@ -24,17 +24,33 @@ class OwnerController extends Controller
             'title' => 'Owners',
             'subtitle' => 'Manage property owners',
             'icon' => 'bi bi-people',            
-            'route_show' => 'owners.show',            
+            'route_view' => 'owners.show',            
             'route_create' => 'owners.create',
             'route_edit' => 'owners.edit',
-            'route_delete' => 'owners.destroy',
-            'items' => $owners,
-            'pagination' => false,
+            'route_delete' => 'owners.destroy',                     
             'search' => true,
-            'footer' => 'Total Owners: ' . $owners->count(),
-            'headers' => ['ID', 'Name', 'Email', 'Properties Owned', 'Date Joined'],
+            'total' => $owners->count(),
+            'footer' => null,
+            'headers' => [
+                ['label' => 'Name', 'key' => 'name'], 
+                ['label' => 'Email', 'key' => 'email'], 
+                ['label' => 'Phone', 'key' => 'phone'], 
+                ['label' => 'Address', 'key' => 'address'],
+            ],
             'actions' => ['view', 'edit', 'delete'],
         ];
+
+        // Pagination 
+        $perPage = 10; // Number of items per page
+        $data['pagination'] = true;
+        $paginatedItems = new \Illuminate\Pagination\LengthAwarePaginator(
+            $owners->forPage(request('page', 1), $perPage),
+            $owners->count(),
+            $perPage,
+            request('page', 1),
+            ['path' => request()->url(), 'query' => request()->query()]
+        );
+        $data['items'] = $paginatedItems;
 
         return view('backend.list', compact('data'));
     }

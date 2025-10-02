@@ -39,6 +39,7 @@ return new class extends Migration
             $table->timestamp('last_updated')->useCurrent()->useCurrentOnUpdate();
             $table->foreignId('agent_id')->nullable()->constrained('agents')->nullOnDelete();
             $table->foreignId('owner_id')->nullable()->constrained('owners')->nullOnDelete();
+            $table->boolean('is_active')->default(true);
             $table->timestamps();
         });
     }

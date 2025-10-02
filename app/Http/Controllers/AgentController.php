@@ -8,6 +8,7 @@ use App\Services\CachedData;
 use Illuminate\Http\Request;
 use App\Services\ImageService;
 use App\Services\RemoveFileService;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class AgentController extends Controller
 {
@@ -21,17 +22,43 @@ class AgentController extends Controller
             'title' => 'Agents',
             'subtitle' => 'Manage your agents',
             'icon' => 'bi bi-person-badge',            
-            'route_show' => 'agents.show',            
+            'route_view' => 'agents.show',            
             'route_create' => 'agents.create',
             'route_edit' => 'agents.edit',
-            'route_delete' => 'agents.destroy',
-            'items' => $agents,
+            'route_delete' => 'agents.destroy',            
             'pagination' => false,
             'search' => true,
-            'footer' => 'Total Agents: ' . $agents->count(),
-            'headers' => ['ID', 'Name', 'Email', 'Phone', 'License', 'Agency', 'Status', 'Join Date'],
+            'total' => $agents->count(),
+            'footer' => null,
+            'headers' => [
+                ['label'=>'Name', 'key'=>'full_name'],
+                ['label'=>'Email', 'key'=>'email'],
+                //['label'=>'Phone', 'key'=>'phone_number'],
+                //['label'=>'License', 'key'=>'license_number'],
+                ['label'=>'Agency', 'key'=>'agency_name'],
+                // ['label'=>'Join Date', 'key'=>'join_date'],
+                ['label'=>'Status', 'key'=>'is_active'],
+            ],
             'actions' => ['view', 'edit', 'delete'],
         ];
+
+        // Add full_name to the agents collection
+        $agents = $agents->map(function ($agent) {
+            $agent->full_name = $agent->first_name . ' ' . $agent->last_name;
+            return $agent;
+        });
+
+        // Paginate the cached collection
+        $perPage = 10; // Number of items per page
+        $data['pagination'] = true;        
+        $paginatedItems = new LengthAwarePaginator(
+            $agents->forPage(request('page', 1), $perPage),
+            $agents->count(),
+            $perPage,
+            request('page', 1),
+            ['path' => request()->url(), 'query' => request()->query()]
+        );        
+        $data['items'] = $paginatedItems;        
 
         return view('backend.list', compact('data'));
     }

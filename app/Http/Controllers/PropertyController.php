@@ -24,19 +24,19 @@ class PropertyController extends Controller
             'route_view' => 'properties.show',            
             'route_create' => 'properties.create',
             'route_edit' => 'properties.edit',
-            'route_delete' => 'properties.destroy',
-            'items' => $properties,
-            'pagination' => false,
+            'route_delete' => 'properties.destroy',                        
             'search' => true,
-            'footer' => 'Total Properties: ' . $properties->count(),
+            'total' => $properties->count(),
+            'footer' => null,
             'headers' => [
                 // ['label' => 'ID', 'key' => 'id'], 
-                ['label' => 'Title', 'key' => 'title'], 
+                ['label' => 'Title', 'key' => 'title'],                 
                 ['label' => 'Type', 'key' => 'property_type'], 
                 ['label' => 'City', 'key' => 'city'], 
                 ['label' => 'Price', 'key' => 'price'], 
                 ['label' => 'Status', 'key' => 'listing_status'], 
-                ['label' => 'Date Listed', 'key' => 'date_listed']
+                ['label' => 'Date Listed', 'key' => 'date_listed'],
+                ['label' => 'Active', 'key' => 'is_active']
             ],
             'actions' => ['view', 'edit', 'delete'],
         ];     
