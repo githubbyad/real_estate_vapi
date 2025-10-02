@@ -17,7 +17,23 @@ class AgentController extends Controller
         // Use cached data to get agents
         $agents = $cachedData->getAgents();
 
-        return view('agents.index', compact('agents'));
+        $data = [
+            'title' => 'Agents',
+            'subtitle' => 'Manage your agents',
+            'icon' => 'bi bi-person-badge',            
+            'route_show' => 'agents.show',            
+            'route_create' => 'agents.create',
+            'route_edit' => 'agents.edit',
+            'route_delete' => 'agents.destroy',
+            'items' => $agents,
+            'pagination' => false,
+            'search' => true,
+            'footer' => 'Total Agents: ' . $agents->count(),
+            'headers' => ['ID', 'Name', 'Email', 'Phone', 'License', 'Agency', 'Status', 'Join Date'],
+            'actions' => ['view', 'edit', 'delete'],
+        ];
+
+        return view('backend.list', compact('data'));
     }
 
     /* Show the form for creating a new agent. */

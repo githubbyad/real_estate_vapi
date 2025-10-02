@@ -8,6 +8,7 @@ use App\Services\CachedData;
 use Illuminate\Http\Request;
 use App\Services\ImageService;
 use App\Services\RemoveFileService;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class PropertyController extends Controller
 {
@@ -15,9 +16,47 @@ class PropertyController extends Controller
     public function index(CachedData $cachedData)
     {
         // Get properties and their images from cache
-        $properties = $cachedData->getProperties();        
+        $properties = $cachedData->getProperties();   
+        $data = [
+            'title' => 'Properties',
+            'subtitle' => 'Manage your property listings',
+            'icon' => 'bi bi-building',            
+            'route_view' => 'properties.show',            
+            'route_create' => 'properties.create',
+            'route_edit' => 'properties.edit',
+            'route_delete' => 'properties.destroy',
+            'items' => $properties,
+            'pagination' => false,
+            'search' => true,
+            'footer' => 'Total Properties: ' . $properties->count(),
+            'headers' => [
+                // ['label' => 'ID', 'key' => 'id'], 
+                ['label' => 'Title', 'key' => 'title'], 
+                ['label' => 'Type', 'key' => 'property_type'], 
+                ['label' => 'City', 'key' => 'city'], 
+                ['label' => 'Price', 'key' => 'price'], 
+                ['label' => 'Status', 'key' => 'listing_status'], 
+                ['label' => 'Date Listed', 'key' => 'date_listed']
+            ],
+            'actions' => ['view', 'edit', 'delete'],
+        ];     
 
-        return view('properties.index', compact('properties'));
+        // Paginate the cached collection
+        $perPage = 10; // Number of items per page
+        $currentPage = request('page', 1);
+        $pagedItems = $properties->forPage($currentPage, $perPage);
+        $paginatedItems = new LengthAwarePaginator(
+            $pagedItems,
+            $properties->count(),
+            $perPage,
+            $currentPage,
+            ['path' => request()->url(), 'query' => request()->query()]
+        );
+
+        $data['items'] = $paginatedItems;
+        $data['pagination'] = true;
+
+        return view('backend.list', compact('data'));
     }
 
     /* Display the specified property */

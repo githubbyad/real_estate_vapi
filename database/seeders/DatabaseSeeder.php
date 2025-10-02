@@ -17,7 +17,10 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
             AdminUserSeeder::class,
-            SettingsTableSeeder::class,            
+            SettingsTableSeeder::class,
+            OwnerSeeder::class,
+            AgentSeeder::class,
+            PropertySeeder::class,
         ]);
     }
 }

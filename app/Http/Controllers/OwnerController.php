@@ -20,7 +20,23 @@ class OwnerController extends Controller
         // Get owners from cache
         $owners = $cachedData->getOwners();
 
-        return view('owners.index', compact('owners'));
+        $data = [
+            'title' => 'Owners',
+            'subtitle' => 'Manage property owners',
+            'icon' => 'bi bi-people',            
+            'route_show' => 'owners.show',            
+            'route_create' => 'owners.create',
+            'route_edit' => 'owners.edit',
+            'route_delete' => 'owners.destroy',
+            'items' => $owners,
+            'pagination' => false,
+            'search' => true,
+            'footer' => 'Total Owners: ' . $owners->count(),
+            'headers' => ['ID', 'Name', 'Email', 'Properties Owned', 'Date Joined'],
+            'actions' => ['view', 'edit', 'delete'],
+        ];
+
+        return view('backend.list', compact('data'));
     }
 
     /* Show the form for creating a new owner. */

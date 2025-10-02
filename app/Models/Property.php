@@ -29,6 +29,10 @@ class Property extends Model
         'owner_id'
     ];
 
+    protected $casts = [
+        'date_listed' => 'date',
+    ];
+
     /**
      * Get the images for the property, ordered by sort_order.
      */

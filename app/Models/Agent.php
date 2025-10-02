@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Agent extends Model
 {
@@ -38,5 +39,19 @@ class Agent extends Model
         static::created(fn () => cache()->forget('agents'));
         static::updated(fn () => cache()->forget('agents'));
         static::deleted(fn () => cache()->forget('agents'));
+
+        // Automatically generate slug from first and last name
+        static::creating(function ($agent) {
+            if (empty($agent->slug)) {
+                $agent->slug = Str::slug($agent->first_name . ' ' . $agent->last_name);
+            }
+        });
+
+        // Automatically update slug if first or last name changes
+        static::updating(function ($agent) {
+            if ($agent->isDirty('first_name') || $agent->isDirty('last_name')) {
+                $agent->slug = Str::slug($agent->first_name . ' ' . $agent->last_name);
+            }
+        });
     }
 }

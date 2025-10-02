@@ -11,7 +11,22 @@ class InquiryController extends Controller
     public function index(CachedData $cachedData)
     {
         $inquiries = $cachedData->getInquiries();
-        return view('inquiries.index', compact('inquiries'));
+
+        $data = [
+            'title' => 'Inquiries',
+            'subtitle' => 'Manage customer inquiries',
+            'icon' => 'bi bi-envelope',
+            'route_show' => 'inquiries.show',
+            'route_edit' => 'inquiries.edit', 
+            'pagination' => false,
+            'search' => true,
+            'items' => $inquiries,
+            'headers' => ['ID', 'Property', 'Name', 'Email', 'Phone', 'Status', 'Received At'],
+            'footer' => 'Total Inquiries: ' . $inquiries->count(),
+            'actions' => ['view', 'edit'],                       
+        ];
+
+        return view('backend.list', compact('data'));
     }
 
     public function show($id, CachedData $cachedData)

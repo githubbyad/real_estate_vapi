@@ -17,6 +17,7 @@ class CreatePropertyImagesTable extends Migration
             $table->id();
             $table->foreignId('property_id')->constrained()->onDelete('cascade');
             $table->string('image_path');
+            $table->integer('sort_order')->default(0);
             $table->timestamps();
         });
     }

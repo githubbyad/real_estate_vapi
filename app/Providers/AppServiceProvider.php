@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Services\CachedData;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Pagination\Paginator;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -21,6 +22,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Use Bootstrap for pagination styling
+        Paginator::useBootstrap();
+
         View::composer('*', function ($view) {
             $settings = CachedData::getSettings();
 
